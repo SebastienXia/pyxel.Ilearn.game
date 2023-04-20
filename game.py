@@ -5,6 +5,8 @@ pyxel.init(128, 128, title="Game_learn")     # Création de la fenêtre de jeu.
 vaisseau_x = 60         # Endroit d'apparition de l'objet
 vaisseau_y = 60         # Endroit d'apparition de l'objet
 
+vies = 1
+
 tirs_liste = []
 
 ennemis_liste = []
@@ -39,7 +41,6 @@ def tirs_creation(x, y, tirs_liste):
         tirs_liste.append([x+4, y-4])
     return tirs_liste
 
-
 def tirs_deplacement(tirs_liste):
     """déplacement des tirs vers le haut et suppression s'ils sortent du cadre"""
 
@@ -71,6 +72,28 @@ def ennemis_deplacement(ennemis_liste):
             ennemis_liste.remove(ennemi)
     return ennemis_liste
 
+# =========================================================
+# == COLLISIONS
+# =========================================================
+
+def vaisseau_suppression(vies):
+    """disparition du vaisseau et d'un ennemi si contact"""
+
+    for ennemi in ennemis_liste:
+        if ennemi[0] <= vaisseau_x+8 and ennemi[1] <= vaisseau_y+8 and ennemi[0]+8 >= vaisseau_x and ennemi[1]+8 >= vaisseau_y:
+            ennemis_liste.remove(ennemi)
+            vies = 0
+    return vies
+
+
+def ennemis_suppression():
+    """disparition d'un ennemi et d'un tir si contact"""
+
+    for ennemi in ennemis_liste:
+        for tir in tirs_liste:
+            if ennemi[0] <= tir[0]+1 and ennemi[0]+8 >= tir[0] and ennemi[1]+8 >= tir[1]:
+                ennemis_liste.remove(ennemi)
+                tirs_liste.remove(tir)
 
 # =========================================================
 # == UPDATE
@@ -78,7 +101,7 @@ def ennemis_deplacement(ennemis_liste):
 def update():
     """mise à jour des variables (30 fois par seconde)"""
 
-    global vaisseau_x, vaisseau_y, tirs_liste, ennemis_liste
+    global vaisseau_x, vaisseau_y, tirs_liste, ennemis_liste, vies
 
     # mise à jour de la position du vaisseau
     vaisseau_x, vaisseau_y = deplacement_vaisseau(vaisseau_x, vaisseau_y)
@@ -93,7 +116,13 @@ def update():
     ennemis_liste = ennemis_creation(ennemis_liste)
 
     # mise a jour des positions des ennemis
-    ennemis_liste = ennemis_deplacement(ennemis_liste) 
+    ennemis_liste = ennemis_deplacement(ennemis_liste)
+
+        # suppression des ennemis et tirs si contact
+    ennemis_suppression()
+
+    # suppression du vaisseau et ennemi si contact
+    vies = vaisseau_suppression(vies)
 
 # =========================================================
 # == DRAW
@@ -104,14 +133,24 @@ def draw():
     # vide la fenetre
     pyxel.cls(6)
 
-    # vaisseau (carre 8x8)
-    pyxel.rect(vaisseau_x, vaisseau_y, 8, 8, 5)
+    if vies > 0:    
 
-    # tirs
-    for tir in tirs_liste:
-        pyxel.rect(tir[0], tir[1], 1, 4, 10)
+        # vaisseau (carre 8x8)
+        pyxel.rect(vaisseau_x, vaisseau_y, 8, 8, 1)
 
-    for ennemi in ennemis_liste:
-        pyxel.rect(ennemi[0], ennemi[1], 7, 7, 0)
+        # tirs
+        for tir in tirs_liste:
+            pyxel.rect(tir[0], tir[1], 1, 4, 10)
+
+        # ennemis
+        for ennemi in ennemis_liste:
+            pyxel.rect(ennemi[0], ennemi[1], 8, 8, 8)
+
+    # sinon: GAME OVER
+    else:
+
+        pyxel.text(50,64, 'GAME OVER', 7)
+
+    
 
 pyxel.run(update, draw)         # appelle aux deux fonction prédéfinies globale et draw. (obligatoire)
