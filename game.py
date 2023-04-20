@@ -2,8 +2,8 @@ import pyxel, random
 
 pyxel.init(128, 128, title="Game_learn")     # Création de la fenêtre de jeu.
 
-vaisseau_x = 60         # Endroit d'apparition de l'objet
-vaisseau_y = 60         # Endroit d'apparition de l'objet
+vaisseau_x = 3        # Endroit d'apparition de l'objet
+vaisseau_y = 117   # Endroit d'apparition de l'objet
 
 vies = 3
 
@@ -154,7 +154,7 @@ def draw():
     """création des objets (30 fois par seconde)"""
 
     # vide la fenetre
-    pyxel.cls(6)
+    pyxel.cls(0)
 
     if vies > 0:    
 
