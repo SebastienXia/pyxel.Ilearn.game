@@ -21,7 +21,7 @@ pyxel.load("my_game_ressources.pyxres")
 vitesse_y = 0
 
 def deplacement_personnage(x, y):
-    
+
     global vitesse_y, dernier_saut
 
     temps_actuel = time.time()
@@ -47,7 +47,8 @@ def deplacement_personnage(x, y):
 
     # Sauter lorsque la touche Z est pressée
     if pyxel.btn(pyxel.KEY_Z) and temps_actuel - dernier_saut >= 1:
-        vitesse_y = -4  # ajuster la valeur selon vos besoins
+        vitesse_y = -5  # ajuster la valeur selon vos besoins
+        dernier_saut = temps_actuel
 
     return x, y
 
@@ -124,6 +125,8 @@ def update():
 def draw():
 
     pyxel.cls(0)
+
+    pyxel.bltm(50, 60, 0, 0, 0, 128, 128, 0)
 
     pyxel.blt(3, 117, 0, 40, 0, 8, 8, 0)
 
