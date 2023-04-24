@@ -2,6 +2,10 @@ import pyxel, time
 
 pyxel.init(160, 120)
 
+pyxel.load("swordgard_rss.pyxres")
+animation_frames = [1, 2, 3, 4, 5]
+frame_counter = 0
+
 # DEPLACEMENT DU PERSONNAGE
 
 personnage_x = 5
@@ -35,7 +39,7 @@ def deplacement_personnage(x, y):
         vitesse_y = 0
 
     #Saut lorsque le bouton Z est touché
-    if pyxel.btn(pyxel.KEY_Z) and temps_actuel - dernier_saut >= 1: # Tous les 2 secondes
+    if pyxel.btn(pyxel.KEY_SPACE) and temps_actuel - dernier_saut >= 0.8: # Tous les 2 secondes
         vitesse_y = -5
         dernier_saut = temps_actuel
 
@@ -89,10 +93,14 @@ def coup_deplacement_gauche(coup_epee_gauche):
 # =========================================================
 def update():
 
-    global personnage_x, personnage_y, coup_epee_droite, coup_epee_gauche
+    global personnage_x, personnage_y, coup_epee_droite, coup_epee_gauche, frame_counter
 
     if pyxel.btnp(pyxel.KEY_ESCAPE):
         pyxel.quit()
+
+    frame_counter += 1
+    if frame_counter >= len(animation_frames):
+        frame_counter = 0
 
     personnage_x, personnage_y = deplacement_personnage(personnage_x, personnage_y)
 
@@ -111,8 +119,17 @@ def update():
 def draw():
     pyxel.cls(0)
 
-    pyxel.rect(personnage_x, personnage_y, 8, 8, 1)
-
+    pyxel.blt(personnage_x, personnage_y, 0, 0, 0, 8, 8, 1)
+# ANIMATION PERSONNAGE [PAS FOU MAIS ON ESSAIE]
+    if pyxel.btn(pyxel.KEY_D):
+        pyxel.blt(personnage_x, personnage_y, 0, animation_frames[frame_counter] * 8, 0, 8, 8, 1)
+    if pyxel.btn(pyxel.KEY_Q):
+        pyxel.blt(personnage_x, personnage_y, 0, animation_frames[frame_counter] * 8, 8, 8, 8, 1)
+    if pyxel.btn(pyxel.KEY_SPACE) and pyxel.btn(pyxel.KEY_D):
+        pyxel.blt(personnage_x, personnage_y, 0, 48, 0, 8, 8, 1)
+    if pyxel.btn(pyxel.KEY_SPACE) and pyxel.btn(pyxel.KEY_Q):
+        pyxel.blt(personnage_x, personnage_y, 0, 48, 8, 8, 8, 1)
+       
     for coups in coup_epee_droite:
         pyxel.rect(coups[0], coups[1], 4, 1, 5)
 
@@ -120,3 +137,5 @@ def draw():
         pyxel.rect(coups[0], coups[1], 4, 1, 5)
 
 pyxel.run(update, draw)
+
+# pyxel edit swordgard_rss
