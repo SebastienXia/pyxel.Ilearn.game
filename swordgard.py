@@ -30,7 +30,7 @@ def deplacement_personnage(x, y):
             y += 1
 
     # ajout de la gravité avec la variable "vitesse_y"
-    vitesse_y += 0.5
+    vitesse_y += 0.4
     y += int(vitesse_y)
 
     # Eviter que le personnage sorte de l'écran en bas
@@ -39,7 +39,7 @@ def deplacement_personnage(x, y):
         vitesse_y = 0
 
     #Saut lorsque le bouton Z est touché
-    if pyxel.btn(pyxel.KEY_SPACE) and temps_actuel - dernier_saut >= 0.8: # Tous les 2 secondes
+    if pyxel.btn(pyxel.KEY_SPACE) and temps_actuel - dernier_saut >= 0.8 or pyxel.btn(pyxel.KEY_Z) and temps_actuel - dernier_saut >= 0.8: # Tous les 2 secondes
         vitesse_y = -5
         dernier_saut = temps_actuel
 
@@ -56,13 +56,13 @@ def coup_creation_droite(x, y, coup_epee_droite):
     temps_actuel = time.time()
 
     if pyxel.btnr(pyxel.KEY_E) and temps_actuel - dernier_coup_droite >= 1:
-        coup_epee_droite.append([x+9, y+4])
+        coup_epee_droite.append([x+9, y])
         dernier_coup_droite = temps_actuel
     return coup_epee_droite
 
 def coup_deplacement_droite(coup_epee_droite):
     for coups in coup_epee_droite:
-        coups[0] += 1
+        coups[0] += 2
         if coups[1] < -8:
             coup_epee_droite.remove(coups)
     return coup_epee_droite
@@ -76,14 +76,14 @@ def coup_creation_gauche(x, y, coup_epee_gauche):
     temps_actuel = time.time()
     
     if pyxel.btnr(pyxel.KEY_A) and temps_actuel - dernier_coup >= 1:
-        coup_epee_gauche.append([x-9, y+4])
+        coup_epee_gauche.append([x-9, y])
         dernier_coup = temps_actuel
     
     return coup_epee_gauche
 
 def coup_deplacement_gauche(coup_epee_gauche):
     for coups in coup_epee_gauche:
-        coups[0] -= 1
+        coups[0] -= 2
         if coups[1] < -8:
             coup_epee_gauche.remove(coups)
     return coup_epee_gauche
@@ -119,22 +119,39 @@ def update():
 def draw():
     pyxel.cls(0)
 
-    pyxel.blt(personnage_x, personnage_y, 0, 0, 0, 8, 8, 1)
+# BACKGROUND
+
+    for sols in range(20):
+        pyxel.blt(0 + ( sols * 8), 113, 0, 0, 16, 8, 8, 1)
+
+    for torch in range(5):
+        pyxel.blt(0 + (torch * 50), 100, 0, 0, 24, 8, 8, 0)
+
+    pyxel.blt(personnage_x, personnage_y, 0, 0, 0, 8, 8, 0)
 # ANIMATION PERSONNAGE [PAS FOU MAIS ON ESSAIE]
     if pyxel.btn(pyxel.KEY_D):
         pyxel.blt(personnage_x, personnage_y, 0, animation_frames[frame_counter] * 8, 0, 8, 8, 1)
     if pyxel.btn(pyxel.KEY_Q):
         pyxel.blt(personnage_x, personnage_y, 0, animation_frames[frame_counter] * 8, 8, 8, 8, 1)
-    if pyxel.btn(pyxel.KEY_SPACE) and pyxel.btn(pyxel.KEY_D):
+    if pyxel.btn(pyxel.KEY_SPACE) or pyxel.btn(pyxel.KEY_Z) and pyxel.btn(pyxel.KEY_D):
         pyxel.blt(personnage_x, personnage_y, 0, 48, 0, 8, 8, 1)
-    if pyxel.btn(pyxel.KEY_SPACE) and pyxel.btn(pyxel.KEY_Q):
+    if pyxel.btn(pyxel.KEY_SPACE) or pyxel.btn(pyxel.KEY_Z) and pyxel.btn(pyxel.KEY_Q):
         pyxel.blt(personnage_x, personnage_y, 0, 48, 8, 8, 8, 1)
+    if pyxel.btn(pyxel.KEY_Z):
+        pyxel.blt(personnage_x, personnage_y, 0, 48, 0, 8, 8, 1)
        
+
+    if pyxel.btnr(pyxel.KEY_E):
+        pyxel.blt(personnage_x, personnage_y, 0, 56, 0, 8, 8, 1)
+    if pyxel.btnr(pyxel.KEY_A):
+        pyxel.blt(personnage_x, personnage_y, 0, 56, 8, 8, 8, 1)
+    
+# ANIMATION ATTACK
     for coups in coup_epee_droite:
-        pyxel.rect(coups[0], coups[1], 4, 1, 5)
+        pyxel.blt(coups[0], coups[1], 0, 64, 0, 8, 8, 0)
 
     for coups in coup_epee_gauche:
-        pyxel.rect(coups[0], coups[1], 4, 1, 5)
+        pyxel.blt(coups[0], coups[1], 0, 64, 8, 8, 8, 0)
 
 pyxel.run(update, draw)
 
